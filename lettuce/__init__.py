@@ -37,6 +37,7 @@ from lettuce.registry import STEP_REGISTRY
 from lettuce.registry import CALLBACK_REGISTRY
 from lettuce.exceptions import StepLoadingError
 from lettuce.plugins import xunit_output
+from lettuce.plugins import jmeter_output
 
 from lettuce import exceptions
 
@@ -62,7 +63,7 @@ class Runner(object):
     features and step definitions on there.
     """
     def __init__(self, base_path, scenarios=None, verbosity=0,
-                 enable_xunit=False, xunit_filename=None,
+                 enable_xunit=False, enable_jmeter=False, xunit_filename=None,
                  run_controller=None):
         """ lettuce.Runner will try to find a terrain.py file and
         import it from within `base_path`
@@ -94,6 +95,9 @@ class Runner(object):
 
         if enable_xunit:
             xunit_output.enable(filename=xunit_filename)
+
+        if enable_jmeter:
+            jmeter_output.enable(filename=jmeter_filename)
 
         reload(output)
 

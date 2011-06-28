@@ -44,12 +44,25 @@ def main(args=sys.argv[1:]):
                       default=False,
                       help='Output JUnit XML test results to a file')
 
+    parser.add_option("--with-jmeter",
+                      dest="enable_jmeter",
+                      action="store_true",
+                      default=False,
+                      help='Output apache Jmeter-like XML test results to a file')
+
     parser.add_option("--xunit-file",
                       dest="xunit_file",
                       default=None,
                       type="string",
                       help='Write JUnit XML to this file. Defaults to '
                       'lettucetests.xml')
+
+    parser.add_option("--jmeter-file",
+                      dest="jmeter_file",
+                      default=None,
+                      type="string",
+                      help='Write JUmeter-like XML log to this file. Defaults to '
+                      'file.*.lettucetests.jmx where * is random number')
 
     parser.add_option("--tags",
                       action="append",
@@ -73,7 +86,9 @@ def main(args=sys.argv[1:]):
     runner = lettuce.Runner(base_path, scenarios=options.scenarios,
                             verbosity=options.verbosity,
                             enable_xunit=options.enable_xunit,
+                            enable_jmeter=options.enable_jmeter,
                             xunit_filename=options.xunit_file,
+                            jmeter_filename=options.jmeter_file,
                             run_controller = run_controller)
 
     result = runner.run()

@@ -22,15 +22,11 @@ def enable(filename=None):
     root.setAttribute('version', '1.2')
     doc.appendChild(root)
     start_time=datetime.now()
-    
-    output_filename = filename or "jmeter.jmx"
+    output_filename = filename or "file.*.lettucetests.jmx"
+
 
     def cast_bool_to_ok_fail(is_ok):
-        if (is_ok):
-            is_ok_text="OK"
-        else:
-            is_ok_text="FAIL"
-        return is_ok_text
+        return "OK" if is_ok else "FAIL"
 
     def logitem(duration, timestamp, label, url, code, is_ok, size):
         log_string={
@@ -46,10 +42,9 @@ def enable(filename=None):
         'dt' : 'text',
         'url':str(url)
         }
-        xml_string_element=doc.createElement("httpSample")
+        xml_string_element=doc.createElement("sample")
         for attr in log_string.keys():
             xml_string_element.setAttribute(attr, log_string[attr])
-        #print xml_string_element
         root.appendChild(xml_string_element)
 
     @before.each_step
@@ -62,10 +57,12 @@ def enable(filename=None):
         timestamp=int(time.time())
         label=step.sentence
         url=str.format('{0}.{1}.{2}',step.scenario.feature.name, step.scenario.name, step.sentence)
-        is_ok= not step.failed
-        code= 0 if is_ok else 1
+        code=1
+        is_ok=not step.failed
+        code=0 if is_ok else 1
         size=0
-        logitem(duration, timestamp, label, url, code, is_ok, size)
+        if step.ran:
+            logitem(duration, timestamp, label, url, code, is_ok, size)
 
     @after.all
     def write_all(total):

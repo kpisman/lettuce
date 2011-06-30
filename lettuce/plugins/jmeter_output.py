@@ -42,7 +42,7 @@ def enable(filename=None):
         'dt' : 'text',
         'url':str(url)
         }
-        xml_string_element=doc.createElement("sample")
+        xml_string_element=doc.createElement('sampleResult')
         for attr in log_string.keys():
             xml_string_element.setAttribute(attr, log_string[attr])
         root.appendChild(xml_string_element)

@@ -30,7 +30,7 @@ def enable(filename=None):
 
     def logitem(duration, timestamp, label, url, code, is_ok, size):
         log_string={
-        't':str(duration),
+        't':str(int(duration*1000)),
         'ts':str(int(timestamp*1000)),
         'rc':str(code),
         'lb':str(label),

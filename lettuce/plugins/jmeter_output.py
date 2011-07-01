@@ -35,14 +35,14 @@ def enable(filename=None):
         'rc':str(code),
         'lb':str(label),
         'rm':cast_bool_to_ok_fail(is_ok),
-        's': 'true' if  is_ok  else 'false', 
+        's': 'True' if  is_ok  else 'False', 
         'lt': '0',
         'tn': 'thread-0',
         'by': str(int(size)),
         'dt' : 'text',
         'url':str(url)
         }
-        xml_string_element=doc.createElement('sampleResult')
+        xml_string_element=doc.createElement('sample')
         for attr in log_string.keys():
             xml_string_element.setAttribute(attr, log_string[attr])
         root.appendChild(xml_string_element)

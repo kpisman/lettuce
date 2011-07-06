@@ -1,29 +1,23 @@
-import sys
 import time
 import os
 from datetime import datetime
+
 from lettuce.terrain import after
 from lettuce.terrain import before
 from xml.dom import minidom
 
 def wrt_output(filename, content):
-    f = open(filename, "w")
-    f.write(content.encode('utf-8'))
-    f.close()
+    with open(filename, "w+") as f:
+        f.write(content.encode('utf-8'))
 
 def total_seconds(td):
     return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 1e6) / 1e6
 
-
 def enable(filename=None):
-
     doc = minidom.Document()
     root = doc.createElement("testResults")
     root.setAttribute('version', '1.2')
     doc.appendChild(root)
-    start_time=datetime.now()
-    output_filename = filename or "file.*.lettucetests.jmx"
-
 
     def cast_bool_to_ok_fail(is_ok):
         return "OK" if is_ok else "FAIL"
@@ -53,14 +47,19 @@ def enable(filename=None):
 
     @after.each_step
     def report_event(step):
-        duration=total_seconds((datetime.now() - step.started))
-        timestamp=int(time.time())
-        label=step.sentence
-        url=str.format('{0}.{1}.{2}',step.scenario.feature.name, step.scenario.name, step.sentence)
-        code=1
-        is_ok=not step.failed
-        code=0 if is_ok else 1
-        size=0
+        if getattr(step, 'started', None):
+            duration=total_seconds((datetime.now() - step.started))
+            timestamp = time.mktime(step.started.timetuple())
+        else:
+            duration = 0
+            timestamp = 0
+        
+        label = step.sentence
+        url = str.format('{0}.{1}.{2}', step.scenario.feature.name, 
+                         step.scenario.name, step.sentence)
+        is_ok = not step.failed
+        code= 0 if is_ok else 1
+        size= 0
         if step.ran:
             logitem(duration, timestamp, label, url, code, is_ok, size)
 
@@ -69,5 +68,6 @@ def enable(filename=None):
         output_filename = filename or "file.*.lettucetests.jmx"
         pid=os.getpid()
         actual_filename=output_filename.replace('*', str(pid))
-        fd=open(actual_filename, 'w')
-        fd.write(doc.toprettyxml(indent="  "))
+
+        with open(actual_filename, 'w+') as fd:
+            fd.write(doc.toprettyxml(indent="  "))

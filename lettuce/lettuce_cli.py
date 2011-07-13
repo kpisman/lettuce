@@ -70,7 +70,7 @@ def main(args=sys.argv[1:]):
                       default=[],
                       help='Comma separated list of tags, run if any found, multiple uses of this argument mean logical AND')
 
-    options, args = parser.parse_args()
+    options, args = parser.parse_args(args)
     if args:
         base_path = os.path.abspath(args[0])
 

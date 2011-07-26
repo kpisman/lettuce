@@ -40,6 +40,12 @@ def enable(filename=None):
     def time_step(step):
         step.started = datetime.now()
 
+    @after.each_feature
+    def insert_feature_end(feature):
+        next_feature  = doc.createElement('feature_end')
+        root.appendChild(next_feature)
+
+
     @after.each_step
     def create_test_case(step):
         classname = "%s : %s" % (step.scenario.feature.name, step.scenario.name)
